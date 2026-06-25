@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+</head>
+<body>
+
+<h1>Network Community</h1>
+
+<a href="/register">Cadastrar usuário</a>
+
+<hr>
+
+<h2>Usuários cadastrados</h2>
+
+<ul>
+    <li th:each="user : ${users}">
+        <b th:text="${user.name}"></b> -
+        <span th:text="${user.email}"></span>
+    </li>
+</ul>
+
+</body>
+</html>
