@@ -30,7 +30,7 @@ public class UserController {
     }
 
     // home listando usuários
-    @GetMapping("/")
+    @GetMapping("/users")
     public String home(Model model) {
         model.addAttribute("users", userService.findAll());
         return "home";
