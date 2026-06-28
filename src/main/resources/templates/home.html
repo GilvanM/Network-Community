@@ -10,6 +10,28 @@
 <a href="/register">Cadastrar usuário</a>
 
 <hr>
+<form action="/users" method="get">
+    <input type="text"
+           name="name"
+           placeholder="Buscar usuário por nome"
+           th:value="${search}" />
+
+    <input type="hidden" name="page" value="0"/>
+    <button type="submit">Buscar</button>
+</form>
+
+<form action="/users" method="get">
+
+    <input type="text"
+           name="name"
+           placeholder="Buscar usuário"
+           th:value="${search}" />
+
+    <!-- RESET DA PAGINA AO BUSCAR -->
+    <input type="hidden" name="page" value="0"/>
+
+    <button type="submit">Buscar</button>
+</form>
 
 <h2>Usuários cadastrados</h2>
 
@@ -21,6 +43,43 @@
         <a th:href="@{/profile/{id}(id=${user.id})}">
             View Profile
         </a>
+
+            <div>
+                <a th:href="@{/users(page=${currentPage - 1})}">Anterior</a>
+
+                <span th:text="${currentPage}"></span>
+
+                <a th:href="@{/users(page=${currentPage + 1})}">Próximo</a>
+            </div>
+        </a>
+
+        <div>
+
+            <!-- ANTERIOR -->
+            <a th:if="${currentPage > 0}"
+               th:href="@{/users(page=${currentPage - 1}, name=${search})}">
+                Anterior
+            </a>
+
+            <!-- PÁGINAS -->
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+
+        <a th:if="${i != currentPage}"
+           th:href="@{/users(page=${i}, name=${search})}"
+           th:text="${i}"></a>
+
+        <span th:if="${i == currentPage}"
+              th:text="${i}"></span>
+
+    </span>
+
+            <!-- PRÓXIMO -->
+            <a th:if="${currentPage < totalPages - 1}"
+               th:href="@{/users(page=${currentPage + 1}, name=${search})}">
+                Próximo
+            </a>
+
+        </div>
     </li>
 </ul>
 
