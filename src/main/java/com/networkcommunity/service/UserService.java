@@ -1,5 +1,6 @@
 package com.networkcommunity.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.networkcommunity.entity.User;
 import com.networkcommunity.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,13 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
+
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Page<User> findAll(Pageable pageable) {
@@ -29,6 +34,8 @@ public class UserService {
         if (existingUser.isPresent()) {
             throw new RuntimeException("Email já cadastrado!");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }
