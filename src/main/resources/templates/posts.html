@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Posts</title>
+</head>
+<body>
+
+<h1>Publicações</h1>
+
+<form action="/posts/create" method="post">
+    <textarea name="content" placeholder="Escreva algo..."></textarea>
+    <button type="submit">Postar</button>
+</form>
+
+<hr>
+
+<div th:each="post : ${posts}">
+    <p th:text="${post.content}"></p>
+    <small th:text="${post.user.name}"></small>
+    <hr>
+</div>
+
+</body>
+</html>
