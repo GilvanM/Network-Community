@@ -21,7 +21,11 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Post() {
+    @Column(nullable = false)
+    private int likes = 0;
+
+    @PrePersist
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
@@ -55,5 +59,12 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 }

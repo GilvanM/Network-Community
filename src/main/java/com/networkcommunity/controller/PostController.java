@@ -29,4 +29,12 @@ public class PostController {
         model.addAttribute("posts", postService.listPosts());
         return "posts";
     }
+
+    @PostMapping("/{id}/like")
+    public String likePost(@PathVariable Long id) {
+
+        postService.likePost(id);
+
+        return "redirect:/posts";
+    }
 }

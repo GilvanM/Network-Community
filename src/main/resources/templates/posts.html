@@ -1,24 +1,66 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Posts</title>
+    <title>Network Community</title>
+    <link rel="stylesheet" th:href="@{/css/posts.css}">
 </head>
+
 <body>
 
-<h1>Publicações</h1>
+<div class="container">
 
-<form action="/posts/create" method="post">
-    <textarea name="content" placeholder="Escreva algo..."></textarea>
-    <button type="submit">Postar</button>
-</form>
+    <h1>Network Community</h1>
 
-<hr>
+    <form action="/posts/create" method="post">
 
-<div th:each="post : ${posts}">
-    <p th:text="${post.content}"></p>
-    <small th:text="${post.user.name}"></small>
+        <label for="content">Nova publicação</label>
+
+        <textarea
+                id="content"
+                name="content"
+                placeholder="Escreva algo..."
+                required>
+        </textarea>
+
+        <button type="submit">
+            Publicar
+        </button>
+
+    </form>
+
     <hr>
-</div>
+
+    <div class="post-card" th:each="post : ${posts}">
+
+        <div class="post-header">
+
+            <strong th:text="${post.user.name}"></strong>
+
+            <small th:text="${#temporals.format(post.createdAt,'dd/MM/yyyy HH:mm')}"></small>
+
+        </div>
+
+        <div class="post-content">
+
+            <p th:text="${post.content}"></p>
+
+        </div>
+
+        <div class="post-footer">
+
+            <form th:action="@{/posts/{id}/like(id=${post.id})}" method="post">
+
+                <button type="submit">
+                    ❤️ Curtir (<span th:text="${post.likes}"></span>)
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div> <!-- fecha container -->
 
 </body>
-</html>
