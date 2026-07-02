@@ -36,8 +36,9 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User findUserById(Long id){
+    public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
-}
+
+} 

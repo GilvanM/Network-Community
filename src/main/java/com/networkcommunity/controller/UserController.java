@@ -31,8 +31,8 @@ public class UserController {
 
     // home listando usuários
     @GetMapping("/users")
-    public String home(Model model) {
+    public String listUsers(Model model) {
         model.addAttribute("users", userService.findAll());
-        return "home";
+        return "users";
     }
 }

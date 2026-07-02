@@ -17,6 +17,10 @@
     <li th:each="user : ${users}">
         <b th:text="${user.name}"></b> -
         <span th:text="${user.email}"></span>
+
+        <a th:href="@{/profile/{id}(id=${user.id})}">
+            View Profile
+        </a>
     </li>
 </ul>
 
