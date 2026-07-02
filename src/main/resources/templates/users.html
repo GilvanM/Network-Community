@@ -1,22 +1,73 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Users</title>
 </head>
 <body>
 
+<a href="/logout">Sair</a>
+
 <h1>Users</h1>
 
-    <div th:each="user : ${users}">
-        <h2 th:text="${user.name}"></h2>
-        <p th:text="${user.email}"></p>
-        <a th:href="@{/profile/{id}(id=${user.id})}">
-            View Profile
-        </a>
+<!-- BUSCA -->
+<form action="/users" method="get">
+    <input type="text"
+           name="name"
+           placeholder="Buscar usuário"
+           th:value="${search}" />
 
+    <input type="hidden" name="page" value="0"/>
 
-    </div>
+    <button type="submit">Buscar</button>
+</form>
+
+<hr>
+
+<!-- LISTA -->
+<div th:each="user : ${users}">
+
+    <h3 th:text="${user.name}"></h3>
+    <p th:text="${user.email}"></p>
+
+    <a th:href="@{/profile/{id}(id=${user.id})}">
+        View Profile
+    </a>
+
+    <form th:action="@{/friends/request/{id}(id=${user.id})}" method="post">
+        <button type="submit">
+            ➕ Adicionar amigo
+        </button>
+    </form>
+
+</div>
+
+<hr>
+
+<!-- PAGINAÇÃO -->
+<div>
+
+    <a th:if="${currentPage > 0}"
+       th:href="@{/users(page=${currentPage - 1}, name=${search})}">
+        Anterior
+    </a>
+
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+
+        <a th:if="${i != currentPage}"
+           th:href="@{/users(page=${i}, name=${search})}"
+           th:text="${i}"></a>
+
+        <span th:if="${i == currentPage}"
+              th:text="${i}"></span>
+
+    </span>
+
+    <a th:if="${currentPage < totalPages - 1}"
+       th:href="@{/users(page=${currentPage + 1}, name=${search})}">
+        Próximo
+    </a>
+
+</div>
 
 </body>
 </html>
