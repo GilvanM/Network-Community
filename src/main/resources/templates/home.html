@@ -16,6 +16,7 @@
 <hr>
 
 <form action="/users" method="get">
+
     <input type="text"
            name="name"
            placeholder="Buscar usuário por nome"
@@ -24,6 +25,7 @@
     <input type="hidden" name="page" value="0"/>
 
     <button type="submit">Buscar</button>
+
 </form>
 
 <hr>
@@ -31,17 +33,22 @@
 <h2>Usuários cadastrados</h2>
 
 <ul>
+
     <li th:each="user : ${users}">
+
         <b th:text="${user.name}"></b> -
         <span th:text="${user.email}"></span>
 
         <a th:href="@{/profile/{id}(id=${user.id})}">
             View Profile
         </a>
+
     </li>
+
 </ul>
 
-<!-- PAGINAÇÃO FORA DO LOOP -->
+<!-- PAGINAÇÃO -->
+
 <div>
 
     <a th:if="${currentPage > 0}"
@@ -53,10 +60,12 @@
 
         <a th:if="${i != currentPage}"
            th:href="@{/users(page=${i}, name=${search})}"
-           th:text="${i}"></a>
+           th:text="${i}">
+        </a>
 
         <span th:if="${i == currentPage}"
-              th:text="${i}"></span>
+              th:text="${i}">
+        </span>
 
     </span>
 

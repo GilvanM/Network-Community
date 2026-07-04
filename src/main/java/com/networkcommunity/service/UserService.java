@@ -1,12 +1,12 @@
 package com.networkcommunity.service;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import com.networkcommunity.entity.User;
 import com.networkcommunity.repository.UserRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service
@@ -52,5 +52,4 @@ public class UserService {
     public Page<User> searchUsersByName(String name, Pageable pageable) {
         return userRepository.findByNameContainingIgnoreCase(name, pageable);
     }
-
-} 
+}
