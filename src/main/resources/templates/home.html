@@ -5,38 +5,37 @@
 </head>
 <body>
 
+<a href="/logout">Sair</a>
+
 <h1>Network Community</h1>
+
+<p>Logado como: <b th:text="${currentUser}"></b></p>
 
 <a href="/register">Cadastrar usuário</a>
 
 <hr>
+
 <form action="/users" method="get">
+
     <input type="text"
            name="name"
            placeholder="Buscar usuário por nome"
            th:value="${search}" />
 
     <input type="hidden" name="page" value="0"/>
-    <button type="submit">Buscar</button>
-</form>
-
-<form action="/users" method="get">
-
-    <input type="text"
-           name="name"
-           placeholder="Buscar usuário"
-           th:value="${search}" />
-
-    <!-- RESET DA PAGINA AO BUSCAR -->
-    <input type="hidden" name="page" value="0"/>
 
     <button type="submit">Buscar</button>
+
 </form>
+
+<hr>
 
 <h2>Usuários cadastrados</h2>
 
 <ul>
+
     <li th:each="user : ${users}">
+
         <b th:text="${user.name}"></b> -
         <span th:text="${user.email}"></span>
 
@@ -44,44 +43,38 @@
             View Profile
         </a>
 
-            <div>
-                <a th:href="@{/users(page=${currentPage - 1})}">Anterior</a>
+    </li>
 
-                <span th:text="${currentPage}"></span>
+</ul>
 
-                <a th:href="@{/users(page=${currentPage + 1})}">Próximo</a>
-            </div>
-        </a>
+<!-- PAGINAÇÃO -->
 
-        <div>
+<div>
 
-            <!-- ANTERIOR -->
-            <a th:if="${currentPage > 0}"
-               th:href="@{/users(page=${currentPage - 1}, name=${search})}">
-                Anterior
-            </a>
+    <a th:if="${currentPage > 0}"
+       th:href="@{/users(page=${currentPage - 1}, name=${search})}">
+        Anterior
+    </a>
 
-            <!-- PÁGINAS -->
-            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
 
         <a th:if="${i != currentPage}"
            th:href="@{/users(page=${i}, name=${search})}"
-           th:text="${i}"></a>
+           th:text="${i}">
+        </a>
 
         <span th:if="${i == currentPage}"
-              th:text="${i}"></span>
+              th:text="${i}">
+        </span>
 
     </span>
 
-            <!-- PRÓXIMO -->
-            <a th:if="${currentPage < totalPages - 1}"
-               th:href="@{/users(page=${currentPage + 1}, name=${search})}">
-                Próximo
-            </a>
+    <a th:if="${currentPage < totalPages - 1}"
+       th:href="@{/users(page=${currentPage + 1}, name=${search})}">
+        Próximo
+    </a>
 
-        </div>
-    </li>
-</ul>
+</div>
 
 </body>
 </html>
