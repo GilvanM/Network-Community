@@ -45,7 +45,7 @@ public class UserController {
         model.addAttribute("search", name);
         model.addAttribute("currentUser", currentUser);
 
-        return "home";
+        return "users";
     }
 
     @GetMapping("/register")

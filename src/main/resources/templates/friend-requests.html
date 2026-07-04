@@ -1,0 +1,18 @@
+<div th:each="req : ${requests}">
+
+    <p>
+        <b th:text="${req.sender.name}"></b>
+        quer ser seu amigo
+    </p>
+
+    <form th:action="@{/friends/accept/{id}(id=${req.id})}" method="post">
+        <button type="submit">Aceitar</button>
+    </form>
+
+    <form th:action="@{/friends/reject/{id}(id=${req.id})}" method="post">
+        <button type="submit">Recusar</button>
+    </form>
+
+    <hr>
+
+</div>

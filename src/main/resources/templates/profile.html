@@ -9,5 +9,32 @@
     <p><b>Nome:</b> <span th:text="${user.name}"></span></p>
     <p><b>Email:</b> <span th:text="${user.email}"></span></p>
     <p><b>Bio:</b> <span th:text="${user.bio}"></span></p>
+
+    <hr>
+
+    <h2>Solicitações de amizade</h2>
+
+    <div th:if="${#lists.isEmpty(requests)}">
+        <p>Nenhuma solicitação pendente.</p>
+    </div>
+
+    <div th:each="request : ${requests}">
+
+        <p>
+            <strong th:text="${request.sender.name}"></strong>
+            deseja ser seu amigo.
+        </p>
+
+        <form th:action="@{/friends/accept/{id}(id=${request.id})}" method="post">
+            <button type="submit">Aceitar</button>
+        </form>
+
+        <form th:action="@{/friends/reject/{id}(id=${request.id})}" method="post">
+            <button type="submit">Recusar</button>
+        </form>
+
+        <hr>
+
+    </div>
 </body>
 </html>
