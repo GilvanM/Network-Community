@@ -21,20 +21,30 @@ public class PostService {
     }
 
     // CRIAR POST
-    public Post createPost(String content, String email) {
+    public void createPost(String content, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Post post = new Post();
         post.setContent(content);
         post.setUser(user);
 
-        return postRepository.save(post);
+        postRepository.save(post);
     }
 
     // LISTAR POSTS
     public List<Post> listPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public void likePost(Long postId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post não encontrado"));
+
+        post.setLikes(post.getLikes() + 1);
+
+        postRepository.save(post);
     }
 }
