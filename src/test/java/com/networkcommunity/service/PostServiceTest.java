@@ -44,7 +44,7 @@ class PostServiceTest {
                 .thenReturn(Optional.of(user));
 
         postService.createPost(
-                "Meu primeiro post",
+                "My first post",
                 user.getEmail()
         );
 
@@ -57,7 +57,7 @@ class PostServiceTest {
         Post savedPost = captor.getValue();
 
         assertEquals(
-                "Meu primeiro post",
+                "My first post",
                 savedPost.getContent()
         );
 
@@ -92,7 +92,7 @@ class PostServiceTest {
 
         Post post = new Post();
         post.setId(1L);
-        post.setContent("Olá comunidade");
+        post.setContent("Hello community");
 
         when(postRepository.findAllByOrderByCreatedAtDesc())
                 .thenReturn(List.of(post));
@@ -105,7 +105,7 @@ class PostServiceTest {
         );
 
         assertEquals(
-                "Olá comunidade",
+                "Hello community",
                 result.getFirst().getContent()
         );
 
