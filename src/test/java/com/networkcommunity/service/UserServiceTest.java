@@ -1,6 +1,8 @@
 package com.networkcommunity.service;
 
 import com.networkcommunity.entity.User;
+import com.networkcommunity.exception.EmailAlreadyExistsException;
+import com.networkcommunity.exception.UserNotFoundException;
 import com.networkcommunity.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,13 +81,13 @@ class UserServiceTest {
         when(userRepository.findByEmail(user.getEmail()))
                 .thenReturn(Optional.of(user));
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        EmailAlreadyExistsException exception = assertThrows(
+                EmailAlreadyExistsException.class,
                 () -> userService.registerUser(user)
         );
 
         assertEquals(
-                "Email já cadastrado!",
+                "Email already exists",
                 exception.getMessage()
         );
 
@@ -114,8 +116,8 @@ class UserServiceTest {
         when(userRepository.findById(99L))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
                 () -> userService.findUserById(99L)
         );
 
@@ -172,6 +174,7 @@ class UserServiceTest {
                 userService.findByEmail(user.getEmail());
 
         assertTrue(result.isPresent());
+
         assertEquals(
                 "Gilvan",
                 result.get().getName()

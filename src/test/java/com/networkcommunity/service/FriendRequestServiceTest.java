@@ -3,6 +3,8 @@ package com.networkcommunity.service;
 import com.networkcommunity.entity.FriendRequest;
 import com.networkcommunity.entity.FriendRequestStatus;
 import com.networkcommunity.entity.User;
+import com.networkcommunity.exception.FriendRequestException;
+import com.networkcommunity.exception.UserNotFoundException;
 import com.networkcommunity.repository.FriendRequestRepository;
 import com.networkcommunity.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -74,11 +76,12 @@ class FriendRequestServiceTest {
 
     @Test
     void shouldThrowExceptionWhenSenderNotFound() {
+
         when(userRepository.findByEmail("gilvan@email.com"))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        FriendRequestException exception = assertThrows(
+                FriendRequestException.class,
                 () -> friendRequestService.sendRequest(
                         "gilvan@email.com",
                         2L
@@ -93,6 +96,7 @@ class FriendRequestServiceTest {
 
     @Test
     void shouldThrowExceptionWhenReceiverNotFound() {
+
         User sender = new User();
         sender.setId(1L);
         sender.setEmail("gilvan@email.com");
@@ -103,8 +107,8 @@ class FriendRequestServiceTest {
         when(userRepository.findById(2L))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        FriendRequestException exception = assertThrows(
+                FriendRequestException.class,
                 () -> friendRequestService.sendRequest(
                         sender.getEmail(),
                         2L
@@ -119,6 +123,7 @@ class FriendRequestServiceTest {
 
     @Test
     void shouldAcceptFriendRequestSuccessfully() {
+
         FriendRequest request = new FriendRequest();
         request.setStatus(FriendRequestStatus.PENDING);
 
@@ -138,6 +143,7 @@ class FriendRequestServiceTest {
 
     @Test
     void shouldRejectFriendRequestSuccessfully() {
+
         FriendRequest request = new FriendRequest();
         request.setStatus(FriendRequestStatus.PENDING);
 
@@ -157,6 +163,7 @@ class FriendRequestServiceTest {
 
     @Test
     void shouldReturnReceivedRequestsSuccessfully() {
+
         User user = new User();
         user.setId(2L);
         user.setEmail("joao@email.com");
@@ -176,7 +183,11 @@ class FriendRequestServiceTest {
                         user.getEmail()
                 );
 
-        assertEquals(1, result.size());
+        assertEquals(
+                1,
+                result.size()
+        );
+
         assertEquals(
                 FriendRequestStatus.PENDING,
                 result.getFirst().getStatus()
@@ -187,12 +198,32 @@ class FriendRequestServiceTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenUserNotFoundOnGetReceivedRequests() {
+
+        when(userRepository.findByEmail("joao@email.com"))
+                .thenReturn(Optional.empty());
+
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
+                () -> friendRequestService.getReceivedRequests(
+                        "joao@email.com"
+                )
+        );
+
+        assertEquals(
+                "User not found",
+                exception.getMessage()
+        );
+    }
+
+    @Test
     void shouldThrowExceptionWhenRequestNotFoundOnAccept() {
+
         when(friendRequestRepository.findById(99L))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        FriendRequestException exception = assertThrows(
+                FriendRequestException.class,
                 () -> friendRequestService.acceptRequest(99L)
         );
 
@@ -204,11 +235,12 @@ class FriendRequestServiceTest {
 
     @Test
     void shouldThrowExceptionWhenRequestNotFoundOnReject() {
+
         when(friendRequestRepository.findById(99L))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        FriendRequestException exception = assertThrows(
+                FriendRequestException.class,
                 () -> friendRequestService.rejectRequest(99L)
         );
 

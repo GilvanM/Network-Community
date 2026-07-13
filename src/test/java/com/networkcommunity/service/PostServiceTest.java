@@ -2,6 +2,8 @@ package com.networkcommunity.service;
 
 import com.networkcommunity.entity.Post;
 import com.networkcommunity.entity.User;
+import com.networkcommunity.exception.PostNotFoundException;
+import com.networkcommunity.exception.UserNotFoundException;
 import com.networkcommunity.repository.PostRepository;
 import com.networkcommunity.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -46,24 +48,33 @@ class PostServiceTest {
                 user.getEmail()
         );
 
-        ArgumentCaptor<Post> captor = ArgumentCaptor.forClass(Post.class);
+        ArgumentCaptor<Post> captor =
+                ArgumentCaptor.forClass(Post.class);
 
         verify(postRepository)
                 .save(captor.capture());
 
         Post savedPost = captor.getValue();
 
-        assertEquals("Meu primeiro post", savedPost.getContent());
-        assertEquals(user, savedPost.getUser());
+        assertEquals(
+                "Meu primeiro post",
+                savedPost.getContent()
+        );
+
+        assertEquals(
+                user,
+                savedPost.getUser()
+        );
     }
 
     @Test
     void shouldThrowExceptionWhenUserNotFound() {
+
         when(userRepository.findByEmail("gilvan@email.com"))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
                 () -> postService.createPost(
                         "Meu post",
                         "gilvan@email.com"
@@ -71,13 +82,14 @@ class PostServiceTest {
         );
 
         assertEquals(
-                "Usuário não encontrado",
+                "User not found",
                 exception.getMessage()
         );
     }
 
     @Test
     void shouldReturnAllPostsSuccessfully() {
+
         Post post = new Post();
         post.setId(1L);
         post.setContent("Olá comunidade");
@@ -87,7 +99,11 @@ class PostServiceTest {
 
         List<Post> result = postService.listPosts();
 
-        assertEquals(1, result.size());
+        assertEquals(
+                1,
+                result.size()
+        );
+
         assertEquals(
                 "Olá comunidade",
                 result.getFirst().getContent()
@@ -99,6 +115,7 @@ class PostServiceTest {
 
     @Test
     void shouldLikePostSuccessfully() {
+
         Post post = new Post();
         post.setId(1L);
         post.setLikes(0);
@@ -108,7 +125,10 @@ class PostServiceTest {
 
         postService.likePost(1L);
 
-        assertEquals(1, post.getLikes());
+        assertEquals(
+                1,
+                post.getLikes()
+        );
 
         verify(postRepository)
                 .save(post);
@@ -116,16 +136,17 @@ class PostServiceTest {
 
     @Test
     void shouldThrowExceptionWhenPostNotFound() {
+
         when(postRepository.findById(99L))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        PostNotFoundException exception = assertThrows(
+                PostNotFoundException.class,
                 () -> postService.likePost(99L)
         );
 
         assertEquals(
-                "Post não encontrado",
+                "Post not found",
                 exception.getMessage()
         );
 
