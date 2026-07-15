@@ -1,7 +1,8 @@
 package com.networkcommunity.service;
-
+import com.networkcommunity.exception.UserNotFoundException;
 import com.networkcommunity.entity.Post;
 import com.networkcommunity.entity.User;
+import com.networkcommunity.exception.PostNotFoundException;
 import com.networkcommunity.repository.PostRepository;
 import com.networkcommunity.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class PostService {
     public void createPost(String content, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(UserNotFoundException::new);
 
         Post post = new Post();
         post.setContent(content);
@@ -41,7 +42,7 @@ public class PostService {
     public void likePost(Long postId) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post não encontrado"));
+                .orElseThrow(PostNotFoundException::new);
 
         post.setLikes(post.getLikes() + 1);
 

@@ -1,6 +1,8 @@
 package com.networkcommunity.service;
 
 import com.networkcommunity.entity.User;
+import com.networkcommunity.exception.UserNotFoundException;
+import com.networkcommunity.exception.EmailAlreadyExistsException;
 import com.networkcommunity.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +34,7 @@ public class UserService {
                 userRepository.findByEmail(user.getEmail());
 
         if (existingUser.isPresent()) {
-            throw new RuntimeException("Email já cadastrado!");
+            throw new EmailAlreadyExistsException();
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -46,7 +48,7 @@ public class UserService {
 
     public User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
     }
 
     public Page<User> searchUsersByName(String name, Pageable pageable) {
