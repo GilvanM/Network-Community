@@ -57,6 +57,6 @@
         @PostMapping("/register")
         public String registerUser(@ModelAttribute User user) {
             userService.registerUser(user);
-            return "redirect:/users";
+            return "redirect:/login";
         }
     }
