@@ -9,8 +9,29 @@
 <body>
 
 <div class="container">
+    <div style="margin-bottom:20px;">
+
 
     <h1>Network Community</h1>
+    <a href="/posts">Feed</a>
+
+    |
+
+    <a href="/users">Users</a>
+
+    |
+
+    <form action="/logout"
+          method="post"
+          style="display:inline;">
+
+        <button type="submit">
+                Logout
+        </button>
+
+    </form>
+
+</div>
 
     <form action="/posts/create" method="post">
 

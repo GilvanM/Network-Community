@@ -23,7 +23,7 @@ public class SecurityConfig {
 
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/users", true)
+                        .defaultSuccessUrl("/posts", true)
                         .permitAll()
                 )
 
