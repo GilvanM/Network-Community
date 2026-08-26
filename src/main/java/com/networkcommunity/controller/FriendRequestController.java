@@ -27,21 +27,29 @@ public class FriendRequestController {
     @GetMapping("/requests")
     public String requests(Authentication auth, Model model) {
 
-        model.addAttribute("requests",
-                friendRequestService.getReceivedRequests(auth.getName()));
+        model.addAttribute(
+                "requests",
+                friendRequestService.getReceivedRequests(auth.getName())
+        );
 
         return "friend-requests";
     }
 
     @PostMapping("/accept/{id}")
-    public String accept(@PathVariable Long id) {
-        friendRequestService.acceptRequest(id);
+    public String accept(@PathVariable Long id,
+                         Authentication auth) {
+
+        friendRequestService.acceptRequest(id, auth.getName());
+
         return "redirect:/friends/requests";
     }
 
     @PostMapping("/reject/{id}")
-    public String reject(@PathVariable Long id) {
-        friendRequestService.rejectRequest(id);
+    public String reject(@PathVariable Long id,
+                         Authentication auth) {
+
+        friendRequestService.rejectRequest(id, auth.getName());
+
         return "redirect:/friends/requests";
     }
 }
