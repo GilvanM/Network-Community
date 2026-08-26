@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,6 +37,7 @@ class FriendRequestServiceTest {
 
     @Test
     void shouldSendFriendRequestSuccessfully() {
+
         User sender = new User();
         sender.setId(1L);
         sender.setEmail("gilvan@email.com");
@@ -124,13 +126,24 @@ class FriendRequestServiceTest {
     @Test
     void shouldAcceptFriendRequestSuccessfully() {
 
+        User receiver = new User();
+        receiver.setId(2L);
+        receiver.setEmail("joao@email.com");
+
         FriendRequest request = new FriendRequest();
+        request.setReceiver(receiver);
         request.setStatus(FriendRequestStatus.PENDING);
+
+        when(userRepository.findByEmail("joao@email.com"))
+                .thenReturn(Optional.of(receiver));
 
         when(friendRequestRepository.findById(1L))
                 .thenReturn(Optional.of(request));
 
-        friendRequestService.acceptRequest(1L);
+        friendRequestService.acceptRequest(
+                1L,
+                "joao@email.com"
+        );
 
         assertEquals(
                 FriendRequestStatus.ACCEPTED,
@@ -144,13 +157,24 @@ class FriendRequestServiceTest {
     @Test
     void shouldRejectFriendRequestSuccessfully() {
 
+        User receiver = new User();
+        receiver.setId(2L);
+        receiver.setEmail("joao@email.com");
+
         FriendRequest request = new FriendRequest();
+        request.setReceiver(receiver);
         request.setStatus(FriendRequestStatus.PENDING);
+
+        when(userRepository.findByEmail("joao@email.com"))
+                .thenReturn(Optional.of(receiver));
 
         when(friendRequestRepository.findById(1L))
                 .thenReturn(Optional.of(request));
 
-        friendRequestService.rejectRequest(1L);
+        friendRequestService.rejectRequest(
+                1L,
+                "joao@email.com"
+        );
 
         assertEquals(
                 FriendRequestStatus.REJECTED,
@@ -158,6 +182,94 @@ class FriendRequestServiceTest {
         );
 
         verify(friendRequestRepository)
+                .save(request);
+    }
+
+    @Test
+    void shouldNotAllowSenderToAcceptFriendRequest() {
+
+        User sender = new User();
+        sender.setId(1L);
+        sender.setEmail("gilvan@email.com");
+
+        User receiver = new User();
+        receiver.setId(2L);
+        receiver.setEmail("joao@email.com");
+
+        FriendRequest request = new FriendRequest();
+        request.setSender(sender);
+        request.setReceiver(receiver);
+        request.setStatus(FriendRequestStatus.PENDING);
+
+        when(userRepository.findByEmail("gilvan@email.com"))
+                .thenReturn(Optional.of(sender));
+
+        when(friendRequestRepository.findById(1L))
+                .thenReturn(Optional.of(request));
+
+        FriendRequestException exception = assertThrows(
+                FriendRequestException.class,
+                () -> friendRequestService.acceptRequest(
+                        1L,
+                        "gilvan@email.com"
+                )
+        );
+
+        assertEquals(
+                "You cannot accept this friend request.",
+                exception.getMessage()
+        );
+
+        assertEquals(
+                FriendRequestStatus.PENDING,
+                request.getStatus()
+        );
+
+        verify(friendRequestRepository, never())
+                .save(request);
+    }
+
+    @Test
+    void shouldNotAllowSenderToRejectFriendRequest() {
+
+        User sender = new User();
+        sender.setId(1L);
+        sender.setEmail("gilvan@email.com");
+
+        User receiver = new User();
+        receiver.setId(2L);
+        receiver.setEmail("joao@email.com");
+
+        FriendRequest request = new FriendRequest();
+        request.setSender(sender);
+        request.setReceiver(receiver);
+        request.setStatus(FriendRequestStatus.PENDING);
+
+        when(userRepository.findByEmail("gilvan@email.com"))
+                .thenReturn(Optional.of(sender));
+
+        when(friendRequestRepository.findById(1L))
+                .thenReturn(Optional.of(request));
+
+        FriendRequestException exception = assertThrows(
+                FriendRequestException.class,
+                () -> friendRequestService.rejectRequest(
+                        1L,
+                        "gilvan@email.com"
+                )
+        );
+
+        assertEquals(
+                "You cannot reject this friend request.",
+                exception.getMessage()
+        );
+
+        assertEquals(
+                FriendRequestStatus.PENDING,
+                request.getStatus()
+        );
+
+        verify(friendRequestRepository, never())
                 .save(request);
     }
 
@@ -219,12 +331,22 @@ class FriendRequestServiceTest {
     @Test
     void shouldThrowExceptionWhenRequestNotFoundOnAccept() {
 
+        User receiver = new User();
+        receiver.setId(2L);
+        receiver.setEmail("joao@email.com");
+
+        when(userRepository.findByEmail("joao@email.com"))
+                .thenReturn(Optional.of(receiver));
+
         when(friendRequestRepository.findById(99L))
                 .thenReturn(Optional.empty());
 
         FriendRequestException exception = assertThrows(
                 FriendRequestException.class,
-                () -> friendRequestService.acceptRequest(99L)
+                () -> friendRequestService.acceptRequest(
+                        99L,
+                        "joao@email.com"
+                )
         );
 
         assertEquals(
@@ -236,12 +358,22 @@ class FriendRequestServiceTest {
     @Test
     void shouldThrowExceptionWhenRequestNotFoundOnReject() {
 
+        User receiver = new User();
+        receiver.setId(2L);
+        receiver.setEmail("joao@email.com");
+
+        when(userRepository.findByEmail("joao@email.com"))
+                .thenReturn(Optional.of(receiver));
+
         when(friendRequestRepository.findById(99L))
                 .thenReturn(Optional.empty());
 
         FriendRequestException exception = assertThrows(
                 FriendRequestException.class,
-                () -> friendRequestService.rejectRequest(99L)
+                () -> friendRequestService.rejectRequest(
+                        99L,
+                        "joao@email.com"
+                )
         );
 
         assertEquals(

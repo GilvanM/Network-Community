@@ -1,4 +1,5 @@
 package com.networkcommunity.service;
+
 import com.networkcommunity.exception.FriendRequestException;
 import com.networkcommunity.exception.UserNotFoundException;
 import com.networkcommunity.entity.*;
@@ -27,16 +28,19 @@ public class FriendRequestService {
     public void sendRequest(String senderEmail, Long receiverId) {
 
         User sender = userRepository.findByEmail(senderEmail)
-                .orElseThrow(() -> new FriendRequestException("Sender not found"));
+                .orElseThrow(() ->
+                        new FriendRequestException("Sender not found"));
 
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new FriendRequestException("Receiver not found"));
+                .orElseThrow(() ->
+                        new FriendRequestException("Receiver not found"));
 
         if (sender.getId().equals(receiver.getId())) {
-            throw new FriendRequestException("You cannot add yourself.");
+            throw new FriendRequestException(
+                    "You cannot add yourself."
+            );
         }
 
-        // verifica qualquer relação entre os dois usuários
         Optional<FriendRequest> existing =
                 friendRequestRepository.findBetweenUsers(sender, receiver);
 
@@ -45,11 +49,15 @@ public class FriendRequestService {
             FriendRequest fr = existing.get();
 
             if (fr.getStatus() == FriendRequestStatus.PENDING) {
-                throw new FriendRequestException("Request already sent.");
+                throw new FriendRequestException(
+                        "Request already sent."
+                );
             }
 
             if (fr.getStatus() == FriendRequestStatus.ACCEPTED) {
-                throw new FriendRequestException("You two are already friends.");
+                throw new FriendRequestException(
+                        "You two are already friends."
+                );
             }
 
             if (fr.getStatus() == FriendRequestStatus.REJECTED) {
@@ -59,8 +67,8 @@ public class FriendRequestService {
             }
         }
 
-        // cria nova solicitação
         FriendRequest request = new FriendRequest();
+
         request.setSender(sender);
         request.setReceiver(receiver);
         request.setStatus(FriendRequestStatus.PENDING);
@@ -78,32 +86,72 @@ public class FriendRequestService {
 
         return friendRequestRepository.findAll()
                 .stream()
-                .filter(fr -> fr.getReceiver().getId().equals(user.getId()))
-                .filter(fr -> fr.getStatus() == FriendRequestStatus.PENDING)
+                .filter(fr ->
+                        fr.getReceiver()
+                                .getId()
+                                .equals(user.getId())
+                )
+                .filter(fr ->
+                        fr.getStatus() == FriendRequestStatus.PENDING
+                )
                 .toList();
     }
 
     // =========================
     // ACCEPT REQUEST
     // =========================
-    public void acceptRequest(Long id) {
+    public void acceptRequest(Long id, String receiverEmail) {
+
+        User receiver = userRepository.findByEmail(receiverEmail)
+                .orElseThrow(UserNotFoundException::new);
 
         FriendRequest request = friendRequestRepository.findById(id)
-                .orElseThrow(() -> new FriendRequestException("Request not found"));
+                .orElseThrow(() ->
+                        new FriendRequestException("Request not found"));
+
+        if (!request.getReceiver().getId().equals(receiver.getId())) {
+            throw new FriendRequestException(
+                    "You cannot accept this friend request."
+            );
+        }
+
+        if (request.getStatus() != FriendRequestStatus.PENDING) {
+            throw new FriendRequestException(
+                    "Friend request is no longer pending."
+            );
+        }
 
         request.setStatus(FriendRequestStatus.ACCEPTED);
+
         friendRequestRepository.save(request);
     }
 
     // =========================
     // REJECT REQUEST
     // =========================
-    public void rejectRequest(Long id) {
+    public void rejectRequest(Long id, String receiverEmail) {
+
+        User receiver = userRepository.findByEmail(receiverEmail)
+                .orElseThrow(UserNotFoundException::new);
 
         FriendRequest request = friendRequestRepository.findById(id)
-                .orElseThrow(() -> new FriendRequestException("Request not found"));
+                .orElseThrow(() ->
+                        new FriendRequestException("Request not found"));
+
+        if (!request.getReceiver().getId().equals(receiver.getId())) {
+            throw new FriendRequestException(
+                    "You cannot reject this friend request."
+            );
+        }
+
+        if (request.getStatus() != FriendRequestStatus.PENDING) {
+            throw new FriendRequestException(
+                    "Friend request is no longer pending."
+            );
+        }
 
         request.setStatus(FriendRequestStatus.REJECTED);
+
         friendRequestRepository.save(request);
     }
 }
