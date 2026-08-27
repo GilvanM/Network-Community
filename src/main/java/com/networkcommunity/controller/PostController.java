@@ -1,8 +1,9 @@
 package com.networkcommunity.controller;
-import org.springframework.ui.Model;
+
 import com.networkcommunity.service.PostService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -25,8 +26,14 @@ public class PostController {
     }
 
     @GetMapping
-    public String listPosts(Model model) {
-        model.addAttribute("posts", postService.listPosts());
+    public String listPosts(Model model,
+                            Authentication auth) {
+
+        model.addAttribute(
+                "posts",
+                postService.listPosts(auth.getName())
+        );
+
         return "posts";
     }
 

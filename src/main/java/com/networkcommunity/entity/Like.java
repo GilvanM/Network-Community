@@ -3,6 +3,7 @@ package com.networkcommunity.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "post_likes")
 public class Like {
 
     @Id
@@ -17,5 +18,23 @@ public class Like {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // getters e setters
+    public Long getId() {
+        return id;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
