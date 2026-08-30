@@ -1,5 +1,7 @@
 package com.networkcommunity.service;
 
+import com.networkcommunity.entity.FriendRequest;
+import com.networkcommunity.entity.FriendRequestStatus;
 import com.networkcommunity.entity.Post;
 import com.networkcommunity.entity.User;
 import com.networkcommunity.exception.PostNotFoundException;
@@ -35,6 +37,7 @@ class PostServiceTest {
 
     @Test
     void shouldCreatePostSuccessfully() {
+
         User user = new User();
         user.setId(1L);
         user.setName("Gilvan");
@@ -88,16 +91,25 @@ class PostServiceTest {
     }
 
     @Test
-    void shouldReturnAllPostsSuccessfully() {
+    void shouldReturnFeedPostsForAuthenticatedUser() {
 
-        Post post = new Post();
-        post.setId(1L);
-        post.setContent("Hello community");
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("gilvan@email.com");
 
-        when(postRepository.findAllByOrderByCreatedAtDesc())
-                .thenReturn(List.of(post));
+        Post ownPost = new Post();
+        ownPost.setId(1L);
+        ownPost.setContent("My post");
+        ownPost.setUser(user);
 
-        List<Post> result = postService.listPosts();
+        when(userRepository.findByEmail(user.getEmail()))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findFeedPosts(user.getId()))
+                .thenReturn(List.of(ownPost));
+
+        List<Post> result =
+                postService.listPosts(user.getEmail());
 
         assertEquals(
                 1,
@@ -105,12 +117,37 @@ class PostServiceTest {
         );
 
         assertEquals(
-                "Hello community",
+                "My post",
                 result.getFirst().getContent()
         );
 
         verify(postRepository)
-                .findAllByOrderByCreatedAtDesc();
+                .findFeedPosts(user.getId());
+    }
+
+    @Test
+    void shouldReturnEmptyFeedWhenUserHasNoPostsOrFriendsPosts() {
+
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("gilvan@email.com");
+
+        when(userRepository.findByEmail(user.getEmail()))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findFeedPosts(user.getId()))
+                .thenReturn(List.of());
+
+        List<Post> result =
+                postService.listPosts(user.getEmail());
+
+        assertEquals(
+                0,
+                result.size()
+        );
+
+        verify(postRepository)
+                .findFeedPosts(user.getId());
     }
 
     @Test

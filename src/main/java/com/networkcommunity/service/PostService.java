@@ -1,8 +1,9 @@
 package com.networkcommunity.service;
-import com.networkcommunity.exception.UserNotFoundException;
+
 import com.networkcommunity.entity.Post;
 import com.networkcommunity.entity.User;
 import com.networkcommunity.exception.PostNotFoundException;
+import com.networkcommunity.exception.UserNotFoundException;
 import com.networkcommunity.repository.PostRepository;
 import com.networkcommunity.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -34,11 +35,16 @@ public class PostService {
         postRepository.save(post);
     }
 
-    // LISTAR POSTS
-    public List<Post> listPosts() {
-        return postRepository.findAllByOrderByCreatedAtDesc();
+    // LISTAR FEED
+    public List<Post> listPosts(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
+
+        return postRepository.findFeedPosts(user.getId());
     }
 
+    // CURTIR POST
     public void likePost(Long postId) {
 
         Post post = postRepository.findById(postId)
