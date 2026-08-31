@@ -1,18 +1,80 @@
-<div th:each="req : ${requests}">
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 
-    <p>
-        <b th:text="${req.sender.name}"></b>
-        quer ser seu amigo
-    </p>
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitações de amizade - Network Community</title>
+    <link rel="stylesheet" th:href="@{/css/posts.css}">
+</head>
 
-    <form th:action="@{/friends/accept/{id}(id=${req.id})}" method="post">
-        <button type="submit">Aceitar</button>
-    </form>
+<body>
 
-    <form th:action="@{/friends/reject/{id}(id=${req.id})}" method="post">
-        <button type="submit">Recusar</button>
-    </form>
+<div class="container">
+
+    <h1>Solicitações de amizade</h1>
+
+    <div style="margin-bottom: 20px;">
+
+        <a href="/posts">Feed</a>
+        |
+        <a href="/users">Usuários</a>
+        |
+        <a href="/friends/requests">Solicitações</a>
+
+        <form action="/logout"
+              method="post"
+              style="display:inline; margin-left: 10px;">
+
+            <button type="submit">
+                Logout
+            </button>
+
+        </form>
+
+    </div>
 
     <hr>
 
+    <div th:if="${#lists.isEmpty(requests)}">
+
+        <p>Você não possui solicitações de amizade pendentes.</p>
+
+    </div>
+
+    <div th:each="req : ${requests}">
+
+        <div class="post-card">
+
+            <p>
+                <strong th:text="${req.sender.name}"></strong>
+                quer ser seu amigo.
+            </p>
+
+            <form th:action="@{/friends/accept/{id}(id=${req.id})}"
+                  method="post"
+                  style="display:inline;">
+
+                <button type="submit">
+                    Aceitar
+                </button>
+
+            </form>
+
+            <form th:action="@{/friends/reject/{id}(id=${req.id})}"
+                  method="post"
+                  style="display:inline;">
+
+                <button type="submit">
+                    Recusar
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
 </div>
+
+</body>
+</html>

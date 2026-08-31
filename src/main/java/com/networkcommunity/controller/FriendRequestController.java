@@ -21,6 +21,7 @@ public class FriendRequestController {
                               Authentication auth) {
 
         friendRequestService.sendRequest(auth.getName(), receiverId);
+
         return "redirect:/users";
     }
 
@@ -41,7 +42,7 @@ public class FriendRequestController {
 
         friendRequestService.acceptRequest(id, auth.getName());
 
-        return "redirect:/friends/requests";
+        return "redirect:/posts";
     }
 
     @PostMapping("/reject/{id}")
@@ -50,6 +51,6 @@ public class FriendRequestController {
 
         friendRequestService.rejectRequest(id, auth.getName());
 
-        return "redirect:/friends/requests";
+        return "redirect:/posts";
     }
 }
