@@ -1,5 +1,48 @@
-<form method="post" action="/login">
-    <input type="text" name="username" placeholder="email">
-    <input type="password" name="password" placeholder="senha">
-    <button type="submit">Login</button>
-</form>
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Network Community</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h1>Network Community</h1>
+
+    <h2>Login</h2>
+
+    <form method="post" action="/login">
+
+        <input
+                type="text"
+                name="username"
+                placeholder="Email"
+                required>
+
+        <input
+                type="password"
+                name="password"
+                placeholder="Senha"
+                required>
+
+        <button type="submit">
+            Entrar
+        </button>
+
+    </form>
+
+    <p>
+        Ainda não possui uma conta?
+    </p>
+
+    <a href="/register">
+        Criar conta
+    </a>
+
+</div>
+</body>
+</html>
